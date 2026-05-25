@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/SCN_Main.unity
     guid: b9511e08f410bd349a29718dc74accdf
   - enabled: 1
+    path: Assets/Scenes/SCN_Rap.unity
+    guid: b860b334943ced4428e19cee2f80471c
+  - enabled: 1
     path: Assets/Scenes/WinScene.unity
     guid: cd4f578ec0828c9448a617731e424eea
   - enabled: 1

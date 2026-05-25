@@ -525,7 +525,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 153049611}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 363936277}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: OpenMainMenuPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &153049611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -713,6 +725,7 @@ GameObject:
   - component: {fileID: 363936275}
   - component: {fileID: 363936274}
   - component: {fileID: 363936273}
+  - component: {fileID: 363936277}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -804,6 +817,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &363936277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363936272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563100a5fc383674c9760eee70588ff0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenu
+  optionsMenu: {fileID: 117116439}
+  mainMenu: {fileID: 1388873257}
 --- !u!1 &374516628
 GameObject:
   m_ObjectHideFlags: 0
@@ -853,7 +880,7 @@ GameObject:
   - component: {fileID: 418392936}
   - component: {fileID: 418392935}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: ButtonQuit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -922,7 +949,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 418392936}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 363936277}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &418392936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2639,7 +2678,7 @@ GameObject:
   - component: {fileID: 1292958888}
   - component: {fileID: 1292958887}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonPlayGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2708,7 +2747,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1292958888}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 363936277}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: PlayGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1292958888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3365,7 +3416,7 @@ GameObject:
   - component: {fileID: 1801176011}
   - component: {fileID: 1801176010}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: ButtonOptions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3434,7 +3485,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1801176011}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 363936277}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: OpenOptionsPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1801176011
 MonoBehaviour:
   m_ObjectHideFlags: 0
