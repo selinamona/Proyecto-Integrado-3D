@@ -1,35 +1,81 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI; //Librería para referenciar clases de NavMesh
-using UnityEngine.SceneManagement;
+using UnityEngine.AI;
 
 public class EnemyAIBase : MonoBehaviour
 {
-    [Header("AI Configuration")]
-    [SerializeField] NavMeshAgent agent; //Ref al componente Agente, que permite que el objeto tenga IA
-    [SerializeField] Transform target; //Ref al transform del objeto que la IA va a perseguir
+    [Header("AI")]
+    public NavMeshAgent agent;
+    public Transform target;
+
+    [Header("Game Over")]
+    public float catchDistance = 1.5f;
+    public GameObject losePanel;
+
+    private bool isGameOver = false;
 
     private void Awake()
     {
-        target = GameObject.Find("Player").transform; //Al inicio referencia el transform del Player, para poder perseguirlo cuando toca
         agent = GetComponent<NavMeshAgent>();
+
+        // Evita rotación automática rara
+        agent.updateRotation = false;
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerObj != null)
+            target = playerObj.transform;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
+        if (losePanel != null)
+            losePanel.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (isGameOver || target == null)
+            return;
+
+        // Seguir al jugador
         agent.SetDestination(target.position);
-        transform.LookAt(target);
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player"))
+        // Distancia para perder
+        float distance = Vector3.Distance(
+            transform.position,
+            target.position
+        );
+
+        if (distance <= catchDistance)
         {
-            SceneManager.LoadScene(3);
+            GameOver();
         }
     }
 
+    private void GameOver()
+    {
+        if (isGameOver)
+            return;
 
+        isGameOver = true;
+
+        if (losePanel != null)
+            losePanel.SetActive(true);
+
+        if (agent != null)
+            agent.isStopped = true;
+
+        Time.timeScale = 0f;
+    }
+
+    private void OnEnable()
+    {
+        isGameOver = false;
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            agent.ResetPath();
+        }
+    }
 }
