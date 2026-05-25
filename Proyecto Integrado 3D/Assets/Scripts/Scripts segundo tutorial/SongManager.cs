@@ -1,27 +1,35 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
-using System.IO;
-using UnityEngine.Networking;
-using System;
 
 public class SongManager : MonoBehaviour
 {
     public static SongManager Instance;
+
+    [Header("Audio")]
     public AudioSource audioSource;
+    public float songDelayInSeconds = 1f;
+
+    [Header("Gameplay")]
     public Lane[] lanes;
-    public float songDelayInSeconds;
-    public double marginOfError; // in seconds
+    public double marginOfError = 0.1;
+    public int inputDelayInMilliseconds = 0;
 
-    public int inputDelayInMilliseconds;
+    [Header("Note Movement")]
+    public float noteTime = 2f;
+    public float noteSpawnY = 5f;
+    public float noteTapY = 0f;
 
-
+    [Header("MIDI")]
     public string fileLocation;
-    public float noteTime;
-    public float noteSpawnY;
-    public float noteTapY;
+
+    public static MidiFile midiFile;
+
     public float noteDespawnY
     {
         get
@@ -30,12 +38,24 @@ public class SongManager : MonoBehaviour
         }
     }
 
-    public static MidiFile midiFile;
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        Instance = this;
-        if (Application.streamingAssetsPath.StartsWith("http://") || Application.streamingAssetsPath.StartsWith("https://"))
+        // Singleton protection
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
+    private void Start()
+    {
+        if (Application.streamingAssetsPath.StartsWith("http://") ||
+            Application.streamingAssetsPath.StartsWith("https://"))
         {
             StartCoroutine(ReadFromWebsite());
         }
@@ -47,52 +67,75 @@ public class SongManager : MonoBehaviour
 
     private IEnumerator ReadFromWebsite()
     {
-        using (UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + "/" + fileLocation))
+        string path = Path.Combine(Application.streamingAssetsPath, fileLocation);
+
+        using (UnityWebRequest www = UnityWebRequest.Get(path))
         {
             yield return www.SendWebRequest();
 
+#if UNITY_2020_1_OR_NEWER
+            if (www.result != UnityWebRequest.Result.Success)
+#else
             if (www.isNetworkError || www.isHttpError)
+#endif
             {
-                Debug.LogError(www.error);
+                Debug.LogError("MIDI Load Error: " + www.error);
             }
             else
             {
                 byte[] results = www.downloadHandler.data;
-                using (var stream = new MemoryStream(results))
+
+                using (MemoryStream stream = new MemoryStream(results))
                 {
                     midiFile = MidiFile.Read(stream);
-                    GetDataFromMidi();
                 }
+
+                GetDataFromMidi();
             }
         }
     }
 
     private void ReadFromFile()
     {
-        midiFile = MidiFile.Read(Application.streamingAssetsPath + "/" + fileLocation);
+        string path = Path.Combine(Application.streamingAssetsPath, fileLocation);
+
+        if (!File.Exists(path))
+        {
+            Debug.LogError("MIDI file not found: " + path);
+            return;
+        }
+
+        midiFile = MidiFile.Read(path);
+
         GetDataFromMidi();
     }
-    public void GetDataFromMidi()
+
+    private void GetDataFromMidi()
     {
         var notes = midiFile.GetNotes();
-        var array = new Melanchall.DryWetMidi.Interaction.Note[notes.Count];
-        notes.CopyTo(array, 0);
+        var noteArray = new Melanchall.DryWetMidi.Interaction.Note[notes.Count];
 
-        foreach (var lane in lanes) lane.SetTimeStamps(array);
+        notes.CopyTo(noteArray, 0);
+
+        foreach (Lane lane in lanes)
+        {
+            lane.SetTimeStamps(noteArray);
+        }
 
         Invoke(nameof(StartSong), songDelayInSeconds);
     }
-    public void StartSong()
+
+    private void StartSong()
     {
         audioSource.Play();
     }
+
     public static double GetAudioSourceTime()
     {
-        return (double)Instance.audioSource.timeSamples / Instance.audioSource.clip.frequency;
-    }
+        if (Instance == null || Instance.audioSource == null || Instance.audioSource.clip == null)
+            return 0;
 
-    void Update()
-    {
-
+        return (double)Instance.audioSource.timeSamples /
+               Instance.audioSource.clip.frequency;
     }
 }
