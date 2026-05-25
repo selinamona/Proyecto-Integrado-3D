@@ -1,35 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI; //Librería para referenciar clases de NavMesh
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 public class EnemyAIBase : MonoBehaviour
 {
     [Header("AI Configuration")]
-    [SerializeField] NavMeshAgent agent; //Ref al componente Agente, que permite que el objeto tenga IA
-    [SerializeField] Transform target; //Ref al transform del objeto que la IA va a perseguir
+    [SerializeField] NavMeshAgent agent;
+    [SerializeField] Transform target;
+
+    private bool isGameOver = false;
 
     private void Awake()
     {
-        target = GameObject.Find("Player").transform; //Al inicio referencia el transform del Player, para poder perseguirlo cuando toca
         agent = GetComponent<NavMeshAgent>();
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            target = playerObj.transform;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        if (isGameOver || target == null) return;
+
         agent.SetDestination(target.position);
         transform.LookAt(target);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (isGameOver) return;
+
+        if (other.CompareTag("Player"))
         {
+            isGameOver = true;
+            Time.timeScale = 1f; // importante para evitar bugs al reiniciar
             SceneManager.LoadScene(3);
         }
     }
-
-
 }
