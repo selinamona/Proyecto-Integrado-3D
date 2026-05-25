@@ -1,48 +1,53 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
 public class EnemyMovement : MonoBehaviour
 {
     public Transform Target;
-    public float UpdateSpeed = 0.1f;
-
     public float catchDistance = 1.5f;
     public GameObject losePanel;
 
-    private NavMeshAgent Agent;
+    private NavMeshAgent agent;
     private bool isGameOver = false;
 
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
+
+        // Desactiva la rotación automática
+        agent.updateRotation = false;
     }
 
     private void OnEnable()
     {
-        // Reset total al reiniciar escena
-        if (Agent != null)
-        {
-            Agent.ResetPath();
-            Agent.isStopped = false;
-        }
-
         isGameOver = false;
+
+        if (agent != null)
+        {
+            agent.ResetPath();
+            agent.isStopped = false;
+        }
     }
 
     private void Start()
     {
         if (losePanel != null)
             losePanel.SetActive(false);
-
-        StartCoroutine(FollowTarget());
     }
 
     private void Update()
     {
-        if (isGameOver || Target == null) return;
+        if (isGameOver || Target == null)
+            return;
 
-        float distance = Vector3.Distance(transform.position, Target.position);
+        // El enemigo sigue al jugador
+        agent.SetDestination(Target.position);
+
+        // Distancia para perder
+        float distance = Vector3.Distance(
+            transform.position,
+            Target.position
+        );
 
         if (distance <= catchDistance)
         {
@@ -52,31 +57,17 @@ public class EnemyMovement : MonoBehaviour
 
     private void Lose()
     {
-        if (isGameOver) return;
+        if (isGameOver)
+            return;
 
         isGameOver = true;
 
         if (losePanel != null)
             losePanel.SetActive(true);
 
+        if (agent != null)
+            agent.isStopped = true;
+
         Time.timeScale = 0f;
-
-        if (Agent != null)
-            Agent.isStopped = true;
-    }
-
-    private IEnumerator FollowTarget()
-    {
-        WaitForSeconds wait = new WaitForSeconds(UpdateSpeed);
-
-        while (enabled)
-        {
-            if (!isGameOver && Agent != null && Target != null)
-            {
-                Agent.SetDestination(Target.position);
-            }
-
-            yield return wait;
-        }
     }
 }
