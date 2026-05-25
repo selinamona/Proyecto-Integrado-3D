@@ -1,31 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Note : MonoBehaviour
 {
-    double timeInstantiated;
     public float assignedTime;
-    void Start()
+
+    private SpriteRenderer spriteRenderer;
+
+    private void Start()
     {
-        timeInstantiated = SongManager.GetAudioSourceTime();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        double timeSinceInstantiated = SongManager.GetAudioSourceTime() - timeInstantiated;
-        float t = (float)(timeSinceInstantiated / (SongManager.Instance.noteTime * 2));
+        // Time until the note should be hit
+        double timeLeft = assignedTime - SongManager.GetAudioSourceTime();
 
+        // Normalize movement based on noteTime
+        float t = 1f - (float)(timeLeft / SongManager.Instance.noteTime);
 
-        if (t > 1)
+        // Move note from spawn position to tap position
+        transform.localPosition = Vector3.Lerp(
+            Vector3.up * SongManager.Instance.noteSpawnY,
+            Vector3.up * SongManager.Instance.noteTapY,
+            t
+        );
+
+        // Enable renderer once visible
+        if (!spriteRenderer.enabled)
+        {
+            spriteRenderer.enabled = true;
+        }
+
+        // Destroy after passing the hit line
+        if (t > 1.2f)
         {
             Destroy(gameObject);
-        }
-        else
-        {
-            transform.localPosition = Vector3.Lerp(Vector3.up * SongManager.Instance.noteSpawnY, Vector3.up * SongManager.Instance.noteDespawnY, t);
-            GetComponent<SpriteRenderer>().enabled = true;
         }
     }
 }
