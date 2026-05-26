@@ -7,6 +7,15 @@ using UnityEngine.Networking;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Interaction;
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+using UnityEngine.Networking;
+using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Interaction;
+
 public class SongManager : MonoBehaviour
 {
     public static SongManager Instance;
@@ -17,11 +26,18 @@ public class SongManager : MonoBehaviour
 
     [Header("Gameplay")]
     public Lane[] lanes;
-    public double marginOfError = 0.1;
+
+    // Easier hit timing
+    public double marginOfError = 0.2;
+
+    // Input delay calibration
     public int inputDelayInMilliseconds = 0;
 
     [Header("Note Movement")]
-    public float noteTime = 2f;
+
+    // Slower notes = easier gameplay
+    public float noteTime = 3f;
+
     public float noteSpawnY = 5f;
     public float noteTapY = 0f;
 
@@ -50,6 +66,9 @@ public class SongManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        // Smoother gameplay
+        Application.targetFrameRate = 120;
     }
 
     private void Start()
@@ -132,7 +151,9 @@ public class SongManager : MonoBehaviour
 
     public static double GetAudioSourceTime()
     {
-        if (Instance == null || Instance.audioSource == null || Instance.audioSource.clip == null)
+        if (Instance == null ||
+            Instance.audioSource == null ||
+            Instance.audioSource.clip == null)
             return 0;
 
         return (double)Instance.audioSource.timeSamples /
