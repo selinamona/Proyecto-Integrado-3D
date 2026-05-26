@@ -74,6 +74,15 @@ public class ScoreManager : MonoBehaviour
     {
         combo = 0;
 
+        // Lose 50 points on miss
+        score -= 50;
+
+        // Prevent negative score
+        if (score < 0)
+        {
+            score = 0;
+        }
+
         if (Instance.missSFX != null)
             Instance.missSFX.Play();
 

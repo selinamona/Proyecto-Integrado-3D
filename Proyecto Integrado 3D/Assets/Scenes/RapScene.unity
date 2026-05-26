@@ -11414,7 +11414,7 @@ PrefabInstance:
       objectReference: {fileID: 504442014}
     - target: {fileID: 5596361180456797232, guid: 6c4e115f1b5a07e44a26bdc42475321b, type: 3}
       propertyPath: winScoreThreshold
-      value: 5500
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 5596506331676156554, guid: 6c4e115f1b5a07e44a26bdc42475321b, type: 3}
       propertyPath: m_Volume
